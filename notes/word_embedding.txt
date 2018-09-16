@@ -1,0 +1,141 @@
+Word Embeddings
+
+Texts converted into numbers and there may be different numerical representations of the same text.
+
+Why do we need Word Embeddings? 
+
+Many ML algorithms and almost all Deep Learn. architect. are incapable of processing strings or plain text in their raw form. 
+They require numbers as i/ps to perform any sort of job such as classification, regression etc. And with the huge amount of data that is present in the text format, it is imperative to extract knowledge out of it and build applications. 
+
+Some real world apps of text apps are: sentiment analysis of reviews by Amazon, document or news classification or clustering by Google etc.
+
+Define Word Embeddings formally:
+	A word embedding format generally tries to map a word using a dictionary to a vector. 
+
+sent = "Word Embeddings are Word converted into numbers" 
+
+A dictionary may be the list of all unique words in the sentence. So, a dictionary may look like - [‘Word’,’Embeddings’,’are’,’Converted’,’into’,’numbers’]
+
+A vector represent. of a word may be a one-hot encoded vector where 1 stands for the position where the word exists and 0 everywhere else. 
+
+Vector represention of word "Embeddings" in above sentence is :
+[0,1,0,0,0]
+
+and so on.
+
+This is just simple way to represent a word in the vector form. 
+
+Different types of Word Embeddings or Word Vectors:
+
+1. Different types of Word Embeddings:
+
+Can be classified into two categories:
+	i. Frequency based Embedding
+	ii. Prediction based Embedding
+
+i. Frequency based Embedding:
+   Generally three types of vector we encounter in this category:
+	i. Count Vector
+	ii. TF-IDF Vector
+	iii. Co-Occurrence Vector
+
+
+i. Count Vector:
+
+Consider a Corpus C of D documents {d1,d2,...,dD} and N unique tokens extracted out of the corpus C. N tokens will form our dictionary and the size of the Count Vector Matrix M will be given by D * N. Each row in the matrix M contains the frequency of tokens in document D(i)
+
+D1: He is a lazy boy. She is also lazy.
+
+D2: Neeraj is a lazy person.
+
+dictionary created may be a list of unique tokens(words) in the corpus = [‘He’,’She’,’lazy’,’boy’,’Neeraj’,’person’]
+
+Here, D = 2 N = 6, 
+The count matrix M have size 2 * 6  (more shown in link ) (https://www.analyticsvidhya.com/blog/2017/06/word-embeddings-count-word2veec/)
+
+Now there will be quite a few variations while preparing the above matrix M. Variations will be generally in :
+	i. Way dictionary is prepared
+  Why? Because is real world apps, we might have a coprus contains millions of docs, and from that we might get hundreds of millions of unique words. So the matrix prepared for this will be very sparse one and inefficient for any computation. So alternative will be to pick say top 10,k words based on frequency and then prepare a dictionary.
+
+
+ii. TF-IDF vectorization::
+
+This is another method based on frequency method, but it is different to the count vectorization in the sense that it takes into account not just the occurrence of a word in a single document but in the entire corpus(all docs).
+
+Common words like 'is', 'the', 'a', etc. tend to appear quite frequently in comparison to the words which are important to a document. 
+
+Ideally, what we would want is to down weight the common words occurring in almost all documents and give more important to words that appear in a subset of documents. 
+
+"TD-IDF works by penalizing these common words("the, a, an, etc,) by assigning them lower weights while giving important to words like Messi in a particular document."
+
+TF = (Number of times term t appears in a document)/(Number of terms in the document)
+
+IDF = log(N/n)
+ N is the number of documents
+  n the number of documents a term t has appeared in.
+
+iii. Co-Occurrence Matrix with a fixed content window: 
+
+Big Idea: 
+
+	
+Similar words tend to occur together and will have similar context for example – Apple is a fruit. Mango is a fruit.
+Apple and mango tend to have a similar context i.e fruit.
+
+Two important concepts:
+	i. Co-occurrence: For a given corpus, co-occurence of a pair of words say w1 and w2 is the number of times they have appeared together in a context window.
+	ii. Context Window: specified by a number and direction. If word has window of 2 it means it next two words and previous 2 words are considered in a window. 
+	For example, Quick Brown Fox Jump Over The Lazy Dog; here window of 2 for word "Fox" considers(previous word; Quick, Brown and Next words: Jump Over)
+
+Variations of Co-occurrence Matrix:
+
+Let's say there are V unique words in the corpus. So vocabulary size = V, where columns of co-occurrent matrix form the content words. 
+Different variations of Co-Occurrence Matrix are:
+
+Co-occurrence matrix is not the word vector representation that is generally used. Instead, this Co-occurrence marix is decomposed using techniques like PCA, SVD, etc. into factors and combination of these factors forms the word vector representation.
+
+Advantages of Co-occurrence Matrix::
+ i. preserves semantic relationships b/w words i.e. man and woman tend to be closer than man and apple
+ ii. It uses SVD at its core, that produces more accurate word vector representations than existing methods
+ iii. it has to be computed once, and can be used anytime once computed. In this sense, it is faster in comparison to others.
+
+Disadvantages of Co-occurrence MAtrix::
+i. It requires huge memory to store co-occurance matrix.
+
+
+2.2 Prediction based Vector:
+
+Another type of word embedding
+
+So far, we have seen deterministic methods to determine word vectors. But these methods proved to be limited in their word representations untill word2vec were introduced.
+
+These methods were prediction based in the sense that they provided probabilities to the words and proved to be state of the art for tasks like word analogies and word similarities. They were also able to achieve tasks like King-man+woman = Queen which was considered a result almost magical.
+
+Word2vec uses a single hidden layer, fully connected neural network. Neurons in hidden layer are all linear neurons. Input layer is set to have as many neurons as there are words in the vocabulary for training. hidden layer size is set to dimensionality of resulting word vectors. 
+
+
+
+** Word2vec is not a single algo. but combination of two techiniques:
+	i. CBOW(continuous bag of words)
+	ii. Skip-gram model
+
+
+Both of these are shallow neural nets that map word(s) to the target variable which is also a word(s). Both of these techniques learn wights that acts as word vector representation.
+
+i. CBOW:
+  Way CBOW work is that it tends to predict the probability of a word given a context. A context may be a single word or a group of words. But for simplicity, I will take a single context word and try to predict a single target word.
+
+In case of CBOW, context words(multiple words) are fed as input to NN and target words are placed at output. Suppose we want n/w to learn relationship b/w words "cat" and "climbed"when "cat" is inputted to the network. In word embedding terminology, word "cat" is referred as the context word and the word "climbed" is referred as the target word. 
+
+Source of above content: https://www.analyticsvidhya.com/blog/2017/06/word-embeddings-count-word2veec/
+
+ CBOW is learning to predict the word by the context. Or maximize the probability of the target word by looking at the context. And this happens to be a problem for rare words. For example, given the context yesterday was really [...] day CBOW model will tell you that most probably the word is beautiful or nice. Words like delightful will get much less attention of the model, because it is designed to predict the most probable word. This word will be smoothed over a lot of examples with more frequent words.
+
+
+ii. Skip-Gram Model: It reverses the use of target and context words. In this case, target word is fed at the input, hidden layer remain the same, and o/p layer of nn is replicated multiple times to accommodate the chosen number of context words.
+
+the skip-gram is designed to predict the context. Given the word delightful it must understand it and tell us, that there is huge probability, the context is yesterday was really [...] day, or some other relevant context.
+
+Nice article for word2Vec(https://iksinc.wordpress.com/tag/continuous-bag-of-words-cbow/)
+
+
